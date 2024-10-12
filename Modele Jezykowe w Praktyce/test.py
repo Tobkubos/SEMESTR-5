@@ -67,9 +67,11 @@ def zad4(data):
     # text = "Hello, world. This is a test."
     # tokens = re.findall(r'\w+|[^\w\s]', text)
     # print(tokens)
-    tokens = re.findall(r'\w+|[^\w\s]', data)
-    print(tokens[:30])
+    tokens = re.split(r'(\W)', data)
+    print(tokens[:30],"\n")
+
     startFromT = re.findall(r'\bT\w*', data)
+    print("wszystkie slowa na litere 'T' ")
     print(startFromT)
     return tokens
     
@@ -94,7 +96,6 @@ def zad5(tokens):
 def zad6(data):
     print("\nzadanie 6")
     splitted = data.split()
-    print(splitted)
     longest = splitted[0]
 
     for s in splitted:
@@ -109,11 +110,12 @@ def zad7(data):
     
     stopWords = ["i", "me", "my", "myself", "we", "our", "ours", "ourselves", "you", "your", "yours", "yourself", "yourselves", "he", "him", "his", "himself", "she", "her", "hers", "herself", "it", "its", "itself", "they", "them", "their", "theirs", "themselves", "what", "which", "who", "whom", "this", "that", "these", "those", "am", "is", "are", "was", "were", "be", "been", "being", "have", "has", "had", "having", "do", "does", "did", "doing", "a", "an", "the", "and", "but", "if", "or", "because", "as", "until", "while", "of", "at", "by", "for", "with", "about", "against", "between", "into", "through", "during", "before", "after", "above", "below", "to", "from", "up", "down", "in", "out", "on", "off", "over", "under", "again", "further", "then", "once", "here", "there", "when", "where", "why", "how", "all", "any", "both", "each", "few", "more", "most", "other", "some", "such", "no", "nor", "not", "only", "own", "same", "so", "than", "too", "very", "s", "t", "can", "will", "just", "don", "should", "now"]
     data = re.sub(r'[^\w\s]', '', data)
-    splitted = data.split()
+
+    splitted = data.lower().split()
     filteredWords = [] 
     for word in splitted:
-        if word.lower() not in stopWords:
-            filteredWords.append(word.lower())
+        if word not in stopWords:
+            filteredWords.append(word)
     
     cnt = Counter(filteredWords)
 
@@ -124,7 +126,7 @@ def zad8(data, n):
     print("\nzadanie 8")
     
     data = re.sub(r'[^\w\s]', '', data)
-    tokens = data.split()
+    tokens = data.lower().split()
 
     ngrams = [tuple(tokens[i:i+n]) for i in range(len(tokens) - n + 1)]
     ngram_counts = Counter(ngrams)
@@ -149,5 +151,5 @@ def main():
     zad5(tokens)
     zad6(text)
     zad7(text)
-    zad8(text, 2)
+    zad8(text, 4)
 main()
