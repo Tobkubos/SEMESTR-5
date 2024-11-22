@@ -1,0 +1,2 @@
+cd C:\SEMESTR_5\SEMESTR5\AI
+java -jar jFuzzyLogic.jar data.fcl
