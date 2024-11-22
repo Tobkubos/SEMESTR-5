@@ -33,6 +33,7 @@ private slots:
     void on_pushButton_7_clicked();
     void on_pushButton_8_clicked();
     void on_pushButton_9_clicked();
+    void on_pushButton_dot_clicked();
 
     void on_pushButton_plus_clicked();
     void on_pushButton_substract_clicked();
@@ -51,6 +52,8 @@ private slots:
     void on_pushButton_abs_clicked();
     void on_pushButton_pow_clicked();
 
+    void ClearErrorContent();
+    void on_pushButton_clearh_clicked();
     //void ResetCalculator(QString errorMessage);
     //void ClearStacks();
 
@@ -61,5 +64,7 @@ private:
     std::stack<double> numbers;
     std::stringstream ss;
     double wynikDouble;
+    bool clearDisplay = false;
+    bool showResultInHistory = true;
 };
 #endif // MAINWINDOW_H

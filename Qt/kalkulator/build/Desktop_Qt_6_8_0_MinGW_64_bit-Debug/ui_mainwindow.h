@@ -49,12 +49,14 @@ public:
     QPushButton *pushButton_cos;
     QPushButton *pushButton_tg;
     QPushButton *pushButton_ctg;
+    QLabel *error;
+    QPushButton *pushButton_clearh;
 
     void setupUi(QMainWindow *MainWindow)
     {
         if (MainWindow->objectName().isEmpty())
             MainWindow->setObjectName("MainWindow");
-        MainWindow->resize(670, 569);
+        MainWindow->resize(670, 560);
         MainWindow->setStyleSheet(QString::fromUtf8("QWidget{\n"
 "background-color: rgb(0,0,0)\n"
 "}\n"
@@ -175,7 +177,7 @@ public:
         title->setAlignment(Qt::AlignmentFlag::AlignCenter);
         historia = new QLabel(centralwidget);
         historia->setObjectName("historia");
-        historia->setGeometry(QRect(370, 50, 291, 511));
+        historia->setGeometry(QRect(370, 130, 291, 421));
         QFont font4;
         font4.setPointSize(16);
         font4.setBold(true);
@@ -213,6 +215,21 @@ public:
         pushButton_ctg->setObjectName("pushButton_ctg");
         pushButton_ctg->setGeometry(QRect(10, 400, 64, 64));
         pushButton_ctg->setFont(font);
+        error = new QLabel(centralwidget);
+        error->setObjectName("error");
+        error->setGeometry(QRect(370, 50, 291, 71));
+        error->setFont(font3);
+        error->setFrameShape(QFrame::Shape::Box);
+        error->setFrameShadow(QFrame::Shadow::Plain);
+        error->setLineWidth(2);
+        error->setScaledContents(false);
+        error->setAlignment(Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter);
+        pushButton_clearh = new QPushButton(centralwidget);
+        pushButton_clearh->setObjectName("pushButton_clearh");
+        pushButton_clearh->setGeometry(QRect(173, 140, 121, 64));
+        pushButton_clearh->setFont(font2);
+        pushButton_clearh->setCursor(QCursor(Qt::CursorShape::ArrowCursor));
+        pushButton_clearh->setStyleSheet(QString::fromUtf8(""));
         MainWindow->setCentralWidget(centralwidget);
 
         retranslateUi(MainWindow);
@@ -253,6 +270,8 @@ public:
         pushButton_cos->setText(QCoreApplication::translate("MainWindow", "cos", nullptr));
         pushButton_tg->setText(QCoreApplication::translate("MainWindow", "tg", nullptr));
         pushButton_ctg->setText(QCoreApplication::translate("MainWindow", "ctg", nullptr));
+        error->setText(QString());
+        pushButton_clearh->setText(QCoreApplication::translate("MainWindow", "C history", nullptr));
     } // retranslateUi
 
 };

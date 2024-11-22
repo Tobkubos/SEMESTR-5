@@ -70,7 +70,20 @@ void MainWindow::on_pushButton_calc_clicked()
     ss << calculatorString.toStdString();
 
     if (calculatorString.trimmed().isEmpty()) {
-        ui->wynik->setText("brak wyrażenia");
+        ui->error->setText("brak wyrażenia");
+        clearDisplay = true;
+        return;
+    }
+
+    if(calculatorString.length()==1) return;
+
+    if(calculatorString[calculatorString.length()-2] == '-' ||
+        calculatorString[calculatorString.length()-2] == '+' ||
+        calculatorString[calculatorString.length()-2] == '/' ||
+        calculatorString[calculatorString.length()-2] == '*' ||
+        calculatorString[calculatorString.length()-2] == '^'){
+        ui->error->setText("błąd");
+        clearDisplay = true;
         return;
     }
 
@@ -91,7 +104,10 @@ void MainWindow::on_pushButton_calc_clicked()
 
             while (!operators.empty() && operatorImportance(operators.top()) >= operatorImportance(oprtr)) {
                 if (numbers.size() < 2) {
-                    calculatorString = "";
+                    ui->error->setText("niepoprawne działanie");
+                    calculatorString.clear();
+                    ui->wynik->setText(calculatorString);
+                    clearDisplay = true;
                     return;
                 }
 
@@ -103,7 +119,10 @@ void MainWindow::on_pushButton_calc_clicked()
                 operators.pop();
 
                 if (topOprtr == '/' && b == 0) {
-                    calculatorString = "";
+                    ui->error->setText("dzielenie przez 0!");
+                    calculatorString.clear();
+                    ui->wynik->setText(calculatorString);
+                    clearDisplay = true;
                     return;
                 }
 
@@ -116,8 +135,10 @@ void MainWindow::on_pushButton_calc_clicked()
     while(!operators.empty()){
 
         if (numbers.size() < 2) {
-            //MainWindow::ResetCalculator("niepoprawne dzialanie");
-            calculatorString = "";
+            ui->error->setText("niepoprawne dzialanie");
+            calculatorString.clear();
+            ui->wynik->setText(calculatorString);
+            clearDisplay = true;
             return;
         }
 
@@ -129,8 +150,10 @@ void MainWindow::on_pushButton_calc_clicked()
         operators.pop();
 
         if (oprtr == '/' && b == 0) {
-            //MainWindow::ResetCalculator("dzielenie przez 0!");
-            calculatorString = "";
+            ui->error->setText("dzielenie przez 0!");
+            calculatorString.clear();
+            ui->wynik->setText(calculatorString);
+            clearDisplay = true;
             return;
         }
         numbers.push(makeOperation(a,b,oprtr));
@@ -142,13 +165,21 @@ void MainWindow::on_pushButton_calc_clicked()
         wynikDouble = 0;
     }
 
-      ui->wynik->setText(QString::number(wynikDouble));
+
+    ui->wynik->setText(QString::number(wynikDouble));
+
+    if(showResultInHistory){
       ui->historia->setText(ui->historia->text() += calculatorString + " = " + QString::number(wynikDouble) + "\n");
-      calculatorString = QString::number(wynikDouble);
+    }
+
+    calculatorString = QString::number(wynikDouble);
 }
+
+
 
 void MainWindow::on_pushButton_sin_clicked()
 {
+    showResultInHistory = false;
     MainWindow::on_pushButton_calc_clicked();
     calculatorString = "sin( " + QString::number(wynikDouble) + " )";
     wynikDouble = sin(wynikDouble);
@@ -156,42 +187,59 @@ void MainWindow::on_pushButton_sin_clicked()
     ui->historia->setText(ui->historia->text() += calculatorString + " = " + QString::number(wynikDouble) + "\n");
     calculatorString = QString::number(wynikDouble);
     ui->wynik->setText(calculatorString);
+    showResultInHistory = true;
 }
 
 void MainWindow::on_pushButton_cos_clicked()
 {
+    showResultInHistory = false;
     MainWindow::on_pushButton_calc_clicked();
     calculatorString = "cos( " + QString::number(wynikDouble) + " )";
     wynikDouble = cos(wynikDouble);
-    ui->wynik->setText(QString::number(wynikDouble));
+
     ui->historia->setText(ui->historia->text() += calculatorString + " = " + QString::number(wynikDouble) + "\n");
+    calculatorString = QString::number(wynikDouble);
+    ui->wynik->setText(calculatorString);
+    showResultInHistory = true;
 }
 
 void MainWindow::on_pushButton_tg_clicked()
 {
+    showResultInHistory = false;
     MainWindow::on_pushButton_calc_clicked();
     calculatorString = "tg( " + QString::number(wynikDouble) + " )";
     wynikDouble = tan(wynikDouble);
-    ui->wynik->setText(QString::number(wynikDouble));
+
     ui->historia->setText(ui->historia->text() += calculatorString + " = " + QString::number(wynikDouble) + "\n");
+    calculatorString = QString::number(wynikDouble);
+    ui->wynik->setText(calculatorString);
+    showResultInHistory = true;
 }
 
 void MainWindow::on_pushButton_ctg_clicked()
 {
+    showResultInHistory = false;
     MainWindow::on_pushButton_calc_clicked();
     calculatorString = "ctg( " + QString::number(wynikDouble) + " )";
     wynikDouble = 1 / tan(wynikDouble);
-    ui->wynik->setText(QString::number(wynikDouble));
+
     ui->historia->setText(ui->historia->text() += calculatorString + " = " + QString::number(wynikDouble) + "\n");
+    calculatorString = QString::number(wynikDouble);
+    ui->wynik->setText(calculatorString);
+    showResultInHistory = true;
 }
 
 void MainWindow::on_pushButton_abs_clicked()
 {
+    showResultInHistory = false;
     MainWindow::on_pushButton_calc_clicked();
     calculatorString = "| " + QString::number(wynikDouble) + " |";
     wynikDouble = abs(wynikDouble);
-    ui->wynik->setText(QString::number(wynikDouble));
+
     ui->historia->setText(ui->historia->text() += calculatorString + " = " + QString::number(wynikDouble) + "\n");
+    calculatorString = QString::number(wynikDouble);
+    ui->wynik->setText(calculatorString);
+    showResultInHistory = true;
 }
 
 void MainWindow::on_pushButton_del_clicked()
@@ -211,66 +259,84 @@ void MainWindow::on_pushButton_del_clicked()
 
 void MainWindow::on_pushButton_0_clicked()
 {
+    MainWindow::ClearErrorContent();
     calculatorString += "0";
     ui->wynik->setText(calculatorString);
 }
 
 void MainWindow::on_pushButton_1_clicked()
 {
+    MainWindow::ClearErrorContent();
     calculatorString += "1";
     ui->wynik->setText(calculatorString);
 }
 
 void MainWindow::on_pushButton_2_clicked()
 {
+    MainWindow::ClearErrorContent();
     calculatorString += "2";
     ui->wynik->setText(calculatorString);
 }
 
 void MainWindow::on_pushButton_3_clicked()
 {
+    MainWindow::ClearErrorContent();
     calculatorString += "3";
     ui->wynik->setText(calculatorString);
 }
 
 void MainWindow::on_pushButton_4_clicked()
 {
+    MainWindow::ClearErrorContent();
     calculatorString += "4";
     ui->wynik->setText(calculatorString);
 }
 
 void MainWindow::on_pushButton_5_clicked()
 {
+    MainWindow::ClearErrorContent();
     calculatorString += "5";
     ui->wynik->setText(calculatorString);
 }
 
 void MainWindow::on_pushButton_6_clicked()
 {
+    MainWindow::ClearErrorContent();
     calculatorString += "6";
     ui->wynik->setText(calculatorString);
 }
 
 void MainWindow::on_pushButton_7_clicked()
 {
+    MainWindow::ClearErrorContent();
     calculatorString += "7";
     ui->wynik->setText(calculatorString);
 }
 
 void MainWindow::on_pushButton_8_clicked()
 {
+    MainWindow::ClearErrorContent();
     calculatorString += "8";
     ui->wynik->setText(calculatorString);
 }
 
 void MainWindow::on_pushButton_9_clicked()
 {
+    MainWindow::ClearErrorContent();
     calculatorString += "9";
+    ui->wynik->setText(calculatorString);
+}
+
+void MainWindow::on_pushButton_dot_clicked()
+{
+    MainWindow::ClearErrorContent();
+    calculatorString += ".";
     ui->wynik->setText(calculatorString);
 }
 
 void MainWindow::on_pushButton_plus_clicked()
 {
+    MainWindow::ClearErrorContent();
     calculatorString += " + ";
     ui->wynik->setText(calculatorString);
 }
@@ -287,24 +353,39 @@ void MainWindow::on_pushButton_substract_clicked()
 
 void MainWindow::on_pushButton_divide_clicked()
 {
+    MainWindow::ClearErrorContent();
     calculatorString += " / ";
     ui->wynik->setText(calculatorString);
 }
 
 void MainWindow::on_pushButton_multiply_clicked()
 {
+    MainWindow::ClearErrorContent();
     calculatorString += " * ";
     ui->wynik->setText(calculatorString);
 }
 
 void MainWindow::on_pushButton_pow_clicked()
 {
+    MainWindow::ClearErrorContent();
     calculatorString += " ^ ";
     ui->wynik->setText(calculatorString);
 }
 
 
+void MainWindow::ClearErrorContent(){
+    if(clearDisplay){
+        ui->error->setText("");
+        calculatorString = "";
+        ui->wynik->setText(calculatorString);
+        clearDisplay = false;
+    }
+}
 
 
+
+void MainWindow::on_pushButton_clearh_clicked(){
+    ui->historia->setText("");
+}
 
 

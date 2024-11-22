@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>670</width>
-    <height>569</height>
+    <height>560</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -423,9 +423,9 @@ border: 3px solid rgb(159,204,46);
     <property name="geometry">
      <rect>
       <x>370</x>
-      <y>50</y>
+      <y>130</y>
       <width>291</width>
-      <height>511</height>
+      <height>421</height>
      </rect>
     </property>
     <property name="font">
@@ -577,6 +577,66 @@ border: 3px solid rgb(159,204,46);
     </property>
     <property name="text">
      <string>ctg</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="error">
+    <property name="geometry">
+     <rect>
+      <x>370</x>
+      <y>50</y>
+      <width>291</width>
+      <height>71</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>12</pointsize>
+      <bold>true</bold>
+     </font>
+    </property>
+    <property name="frameShape">
+     <enum>QFrame::Shape::Box</enum>
+    </property>
+    <property name="frameShadow">
+     <enum>QFrame::Shadow::Plain</enum>
+    </property>
+    <property name="lineWidth">
+     <number>2</number>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+    <property name="scaledContents">
+     <bool>false</bool>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="pushButton_clearh">
+    <property name="geometry">
+     <rect>
+      <x>173</x>
+      <y>140</y>
+      <width>121</width>
+      <height>64</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>15</pointsize>
+      <bold>false</bold>
+      <underline>false</underline>
+     </font>
+    </property>
+    <property name="cursor">
+     <cursorShape>ArrowCursor</cursorShape>
+    </property>
+    <property name="styleSheet">
+     <string notr="true"/>
+    </property>
+    <property name="text">
+     <string>C history</string>
     </property>
    </widget>
   </widget>
