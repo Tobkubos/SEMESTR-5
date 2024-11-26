@@ -43,20 +43,22 @@ private slots:
     void on_pushButton_calc_clicked();
 
     void on_pushButton_del_clicked();
+    void on_pushButton_back_clicked();
 
     void on_pushButton_sin_clicked();
     void on_pushButton_cos_clicked();
     void on_pushButton_tg_clicked();
     void on_pushButton_ctg_clicked();
 
-    //void on_pushButton_percentage_clicked();
     void on_pushButton_abs_clicked();
     void on_pushButton_pow_clicked();
+    void on_pushButton_sqrt_clicked();
+
+    void on_pushButton_log_clicked();
+    void on_pushButton_ln_clicked();
 
     void ClearErrorContent();
     void on_pushButton_clearh_clicked();
-    //void ResetCalculator(QString errorMessage);
-    //void ClearStacks();
 
 private:
     Ui::MainWindow *ui;
