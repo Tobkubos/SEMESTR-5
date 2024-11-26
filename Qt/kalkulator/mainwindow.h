@@ -6,6 +6,7 @@
 #include <sstream>
 #include <cctype>
 #include <math.h>
+#include <QRegularExpression>
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
