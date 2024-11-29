@@ -5,14 +5,14 @@ import numpy as np
 
 maxPointVal = 2
 minPointVal = -2
-biasVal = 0.4
+biasVal = 0.9
 resolution = 0.01
-a = 5
+a = 1
 l = 1
 
 weights = []
-weights.append(random.uniform(-1, 1))
-weights.append(random.uniform(-1, 1))
+for i in range(0, 9):
+    weights.append(random.uniform(-1, 1))
 random.shuffle(weights)
 
 x_vals = []
@@ -76,11 +76,11 @@ def Neuron(IsBias, typeOfFunction):
 
             if(IsBias == True):
                 if(typeOfFunction == 0):
-                    result = linear(sum + biasVal)
+                    result = linear(sum + biasVal * weights[2])
                 if(typeOfFunction == 1):
-                    result = prog_unipolar(sum + biasVal)
+                    result = prog_unipolar(sum + biasVal * weights[2])
                 if(typeOfFunction == 2):
-                    result = sigmoid_unipolar(sum + biasVal)
+                    result = sigmoid_unipolar(sum + biasVal * weights[2])
                         
             else:
                 if(typeOfFunction == 0):
@@ -103,24 +103,24 @@ def Neuron(IsBias, typeOfFunction):
 def NeuralNetwork(IsBias, typeOfFunction):
     for i in np.arange(minPointVal, maxPointVal, resolution):
         for j in np.arange(minPointVal, maxPointVal, resolution):
-            sum = weights[0] * i + weights[1] * j
+            
             
 
             if(IsBias == True):
                 if(typeOfFunction == 0):
-                    result = linear(linear(sum + biasVal)*weights[0] + linear(sum + biasVal)*weights[1] + biasVal)
+                    result = linear(linear(weights[0] * i + weights[1] * j + weights[2] * biasVal)*weights[3] + linear(weights[4] * i + weights[5] * j + weights[6] * biasVal)*weights[7] + weights[8] * biasVal)
                 if(typeOfFunction == 1):
-                    result = prog_unipolar(prog_unipolar(sum + biasVal)*weights[0] + prog_unipolar(sum + biasVal)*weights[1] + biasVal)
+                    result = prog_unipolar(prog_unipolar(weights[0] * i + weights[1] * j + weights[2] * biasVal)*weights[3] + prog_unipolar(weights[4] * i + weights[5] * j + weights[6] * biasVal)*weights[7] + weights[8] * biasVal)
                 if(typeOfFunction == 2):
-                    result = sigmoid_unipolar(sigmoid_unipolar(sum + biasVal)*weights[0] + sigmoid_unipolar(sum + biasVal)*weights[1] + biasVal)
+                    result = sigmoid_unipolar(sigmoid_unipolar(weights[0] * i + weights[1] * j + weights[2] * biasVal)*weights[3] + sigmoid_unipolar(weights[4] * i + weights[5] * j + weights[6] * biasVal)*weights[7] + weights[8] * biasVal)
                         
             else:
                 if(typeOfFunction == 0):
-                    result = linear(linear(sum)*weights[0] + linear(sum)*weights[1])
+                    result = linear(linear(weights[0] * i + weights[1] * j)*weights[2] + linear(weights[3] * i + weights[4] * j)*weights[5])
                 if(typeOfFunction == 1):
-                    result = prog_unipolar(prog_unipolar(sum)*weights[0] + prog_unipolar(sum)*weights[1])
+                    result = prog_unipolar(prog_unipolar(weights[0] * i + weights[1] * j)*weights[2] + prog_unipolar(weights[3] * i + weights[4] * j)*weights[5])
                 if(typeOfFunction == 2):
-                    result = sigmoid_unipolar(sigmoid_unipolar(sum)*weights[0] + sigmoid_unipolar(sum)*weights[1])
+                    result = sigmoid_unipolar(sigmoid_unipolar(weights[0] * i + weights[1] * j)*weights[2] + sigmoid_unipolar(weights[3] * i + weights[4] * j)*weights[5])
                 
             color = 'white'
             color = chooseColor(result, typeOfFunction)
