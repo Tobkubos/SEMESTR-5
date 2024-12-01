@@ -6,19 +6,78 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>983</width>
+    <width>1298</width>
     <height>623</height>
    </rect>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>1298</width>
+    <height>623</height>
+   </size>
+  </property>
+  <property name="maximumSize">
+   <size>
+    <width>1298</width>
+    <height>623</height>
+   </size>
   </property>
   <property name="windowTitle">
    <string>MainWindow</string>
   </property>
+  <property name="styleSheet">
+   <string notr="true">QWidget{
+background-color: rgb(16, 0, 43);
+border: 2px solid rgb(199, 125, 255);
+border-radius: 15px;
+font-size: 14px;
+font-weight: bold;
+font-family: Arial;
+}
+
+QLabel{
+border: none;
+}
+
+QPushButton{
+background-color: rgb(157, 78, 221);
+color: rgb(16, 0, 43);
+}
+
+QRadioButton{
+border: none;
+}</string>
+  </property>
   <widget class="QWidget" name="centralwidget">
+   <property name="sizePolicy">
+    <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+     <horstretch>0</horstretch>
+     <verstretch>0</verstretch>
+    </sizepolicy>
+   </property>
+   <property name="minimumSize">
+    <size>
+     <width>1298</width>
+     <height>623</height>
+    </size>
+   </property>
+   <property name="maximumSize">
+    <size>
+     <width>1298</width>
+     <height>623</height>
+    </size>
+   </property>
+   <property name="baseSize">
+    <size>
+     <width>1298</width>
+     <height>623</height>
+    </size>
+   </property>
    <widget class="QTextEdit" name="KsiazkaTyt">
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>240</y>
+      <y>260</y>
       <width>321</width>
       <height>31</height>
      </rect>
@@ -28,7 +87,7 @@
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>290</y>
+      <y>320</y>
       <width>321</width>
       <height>31</height>
      </rect>
@@ -38,7 +97,7 @@
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>220</y>
+      <y>240</y>
       <width>321</width>
       <height>16</height>
      </rect>
@@ -51,7 +110,7 @@
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>270</y>
+      <y>300</y>
       <width>321</width>
       <height>16</height>
      </rect>
@@ -64,7 +123,7 @@
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>110</y>
+      <y>120</y>
       <width>321</width>
       <height>31</height>
      </rect>
@@ -84,7 +143,7 @@
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>90</y>
+      <y>100</y>
       <width>321</width>
       <height>16</height>
      </rect>
@@ -123,7 +182,7 @@
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>200</y>
+      <y>220</y>
       <width>321</width>
       <height>16</height>
      </rect>
@@ -136,26 +195,26 @@
     <property name="geometry">
      <rect>
       <x>250</x>
-      <y>150</y>
+      <y>160</y>
       <width>80</width>
       <height>24</height>
      </rect>
     </property>
     <property name="text">
-     <string>PushButton</string>
+     <string>dodaj</string>
     </property>
    </widget>
    <widget class="QPushButton" name="ksiazkaAdd">
     <property name="geometry">
      <rect>
       <x>250</x>
-      <y>330</y>
+      <y>360</y>
       <width>80</width>
       <height>24</height>
      </rect>
     </property>
     <property name="text">
-     <string>PushButton</string>
+     <string>dodaj</string>
     </property>
    </widget>
    <widget class="QGroupBox" name="osoby">
@@ -163,7 +222,7 @@
      <rect>
       <x>360</x>
       <y>40</y>
-      <width>120</width>
+      <width>191</width>
       <height>541</height>
      </rect>
     </property>
@@ -171,43 +230,56 @@
      <string>Osoby</string>
     </property>
    </widget>
-   <widget class="QGroupBox" name="groupBox_2">
+   <widget class="QGroupBox" name="ksiazki">
     <property name="geometry">
      <rect>
-      <x>510</x>
+      <x>560</x>
       <y>40</y>
-      <width>120</width>
+      <width>201</width>
       <height>541</height>
      </rect>
     </property>
     <property name="title">
-     <string>Ksiazki</string>
+     <string>Książki</string>
     </property>
    </widget>
-   <widget class="QGroupBox" name="groupBox_3">
+   <widget class="QGroupBox" name="wypozyczenia">
     <property name="geometry">
      <rect>
-      <x>660</x>
+      <x>770</x>
       <y>40</y>
-      <width>311</width>
-      <height>571</height>
+      <width>521</width>
+      <height>541</height>
      </rect>
     </property>
     <property name="title">
      <string>Wypożyczenia</string>
     </property>
    </widget>
-   <widget class="QPushButton" name="ksiazkaAdd_2">
+   <widget class="QPushButton" name="wypozycz">
     <property name="geometry">
      <rect>
       <x>360</x>
       <y>590</y>
-      <width>271</width>
+      <width>401</width>
       <height>24</height>
      </rect>
     </property>
     <property name="text">
      <string>Wypożycz!</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="oddaj">
+    <property name="geometry">
+     <rect>
+      <x>770</x>
+      <y>590</y>
+      <width>521</width>
+      <height>24</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Oddaj!</string>
     </property>
    </widget>
   </widget>
