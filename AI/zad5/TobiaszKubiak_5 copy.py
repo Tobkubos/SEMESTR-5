@@ -55,7 +55,7 @@ def CalculateWeights():
     
 def learn():
     print('\n')
-    for epoch in range(20):
+    for epoch in range(10):
             randomQueue1 = list(range(7))
             randomQueue2 = list(range(7))
             random.shuffle(randomQueue1)
