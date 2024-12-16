@@ -1,91 +1,142 @@
 import sys
 from PyQt6 import QtSql
-from PyQt6.QtWidgets import QApplication, QWidget, QTableView, QVBoxLayout
-import sqlite3
+from PyQt6.QtSql import QSqlQuery, QSqlDatabase 
+from PyQt6.QtWidgets import QApplication, QWidget, QTableView, QHBoxLayout
 
-# Funkcja do stworzenia tabeli
-def create_table():
-    # Połączenie z bazą danych SQLite
-    conn = sqlite3.connect('example.db')  # Używamy pliku example.db
-    cursor = conn.cursor()
+def add_person(name, surname):
+    query = QSqlQuery()
+    query.prepare("INSERT INTO osoby (Name, Surname) VALUES (?, ?)")
+    query.addBindValue(name)
+    query.addBindValue(surname)
+    if not query.exec():
+        print("Nie udalo sie dodac osoby:", query.lastError().text())
+        
+def add_book(title, author):
+    query = QSqlQuery()
+    query.prepare("INSERT INTO ksiazki (Title, Author) VALUES (?, ?)")
+    query.addBindValue(title)
+    query.addBindValue(author)
+    if not query.exec():
+        print("Nie udalo sie dodac ksiazki:", query.lastError().text())
 
-    # Tworzenie tabeli, jeśli jeszcze nie istnieje
-    cursor.execute('''
-    CREATE TABLE IF NOT EXISTS tabela (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        first_name TEXT NOT NULL,
-        last_name TEXT NOT NULL
-    );
-    ''')
+def add_wypozycznia(osID, ksiazkaID):
+    query = QSqlQuery()
+    query.prepare("INSERT INTO wypozyczenia (PersonID, BookID) VALUES (?, ?)")
+    query.addBindValue(osID)
+    query.addBindValue(ksiazkaID)
+    if not query.exec():
+        print("Nie udalo sie dodac ksiazki:", query.lastError().text())
 
-    # Zatwierdzenie zmian
-    conn.commit()
 
-    # Zamknięcie połączenia
-    conn.close()
+def create_table_osoby():
+    query = QSqlQuery()
+    
+    query.exec("DROP TABLE osoby")
+    create_table_sql = """
+    CREATE TABLE IF NOT EXISTS osoby (
+        PersonID INTEGER PRIMARY KEY AUTOINCREMENT,
+        Name VARCHAR(255),
+        Surname VARCHAR(255)
+    )
+    """
+    if not query.exec(create_table_sql):
+        print("Nie udalo sie stworzyc tabeli:", query.lastError().text())
+    
+def create_table_ksiazki():
+    query = QSqlQuery()
+    
+    query.exec("DROP TABLE ksiazki")
+    create_table_sql = """
+    CREATE TABLE IF NOT EXISTS ksiazki (
+        BookID INTEGER PRIMARY KEY AUTOINCREMENT,
+        Title VARCHAR(255),
+        Author VARCHAR(255)
+    )
+    """
+    if not query.exec(create_table_sql):
+        print("Nie udalo sie stworzyc tabeli:", query.lastError().text())
 
-    print("Tabela została utworzona.")
-
-# Tworzymy tabelę przed otwarciem połączenia w PyQt6
-create_table()
-
-# Inicjalizacja aplikacji PyQt6
+def create_table_wypozyczenia():
+    query = QSqlQuery()
+    
+    query.exec("DROP TABLE IF EXISTS wypozyczenia")
+    create_table_sql = """
+    CREATE TABLE IF NOT EXISTS wypozyczenia (
+        LoanID INTEGER PRIMARY KEY AUTOINCREMENT,
+        PersonID INTEGER,
+        BookID INTEGER,
+        FOREIGN KEY (PersonID) REFERENCES osoby(PersonID),
+        FOREIGN KEY (BookID) REFERENCES ksiazki(BookID)
+    )
+    """
+    if not query.exec(create_table_sql):
+        print("Nie udało się stworzyć tabeli wypożyczeń:", query.lastError().text())
+        
 app = QApplication([])
 
-# Utworzenie głównego okna
 window = QWidget()
-window.setWindowTitle("Task Manager")
+window.setWindowTitle("Book Borrow")
 window.setGeometry(300, 300, 700, 700)
 
-# Połączenie z bazą danych SQLite za pomocą PyQt6
-db = QtSql.QSqlDatabase.addDatabase("QSQLITE")
-db.setDatabaseName("example.db")  # Łączenie z istniejącą bazą danych example.db
+db = QSqlDatabase.addDatabase("QSQLITE")
+db.setDatabaseName("book_borrow.db")
 
 if not db.open():
-    print("Nie udało się połączyć z bazą danych.")
+    print("Polaczenie nie udane:", db.lastError().text())
     sys.exit(1)
 
-# Tworzymy model i ustawiamy tabelę
+create_table_osoby()
+create_table_ksiazki()
+create_table_wypozyczenia()
+add_person("John", "Doe")
+add_person("Jane", "Smith")
+
+add_book("krzyzacy", "sienkiewicz")
+add_book("bandyta", "remi mroz")
+
+add_wypozycznia(1,1)
+add_wypozycznia(2,1)
+
+
+#
 model = QtSql.QSqlTableModel()
-model.setTable("tabela")  # Łączenie z tabelą 'tabela'
-model.select()  # Ładujemy dane z tabeli
+model.setTable("osoby")
+model.select()
 
-# Dodawanie rekordu na sztywno ("Adam Kowalski")
-def add_record():
-    # Wstawiamy dane na sztywno
-    first_name = "Adam"
-    last_name = "Kowalski"
+view = QTableView()
+view.setModel(model)
+#
 
-    # Dodajemy nowy wiersz do modelu
-    row = model.rowCount()
-    model.insertRow(row)
+#
+model2 = QtSql.QSqlTableModel()
+model2.setTable("ksiazki")
+model2.select()
 
-    # Ustawiamy dane w nowym wierszu
-    model.setData(model.index(row, 1), first_name)  # Kolumna 1 (imię)
-    model.setData(model.index(row, 2), last_name)   # Kolumna 2 (nazwisko)
+view2 = QTableView()
+view2.setModel(model2)
+#
 
-    # Zatwierdzamy zmiany do bazy danych
-    model.submitAll()
+#
+model3 = QtSql.QSqlQueryModel()
+query = """
+    SELECT o.Name, o.Surname, k.Title, k.Author
+    FROM wypozyczenia w
+    JOIN osoby o ON w.PersonID = o.PersonID
+    JOIN ksiazki k ON w.BookID = k.BookID
+"""
+model3.setQuery(query)
 
-    # Odświeżamy model, aby dane były widoczne w tabeli
-    model.select()
+view3 = QTableView()
+view3.setModel(model3)
+view3.show()
+#
 
-# Wywołanie funkcji dodającej rekord
-add_record()
-
-# Utworzenie widoku tabeli
-table_view = QTableView()
-table_view.setModel(model)
-
-# Tworzenie layoutu i dodanie widoku do okna
-layout = QVBoxLayout()
-layout.addWidget(table_view)
-
-# Ustawienie layoutu w oknie
+layout = QHBoxLayout()
+layout.addWidget(view)
+layout.addWidget(view2)
+layout.addWidget(view3)
 window.setLayout(layout)
 
-# Wyświetlenie okna
 window.show()
 
-# Uruchomienie aplikacji
 sys.exit(app.exec())
