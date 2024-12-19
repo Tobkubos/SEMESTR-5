@@ -2,7 +2,10 @@ import sys
 from PyQt6 import QtSql
 from PyQt6.QtCore import Qt
 from PyQt6.QtSql import QSqlQuery, QSqlDatabase 
-from PyQt6.QtWidgets import QApplication, QWidget, QTableView, QHBoxLayout, QVBoxLayout, QLabel, QPushButton, QComboBox, QLineEdit, QAbstractItemView
+from PyQt6.QtWidgets import QApplication, QWidget, QTableView, QHBoxLayout, QVBoxLayout, QLabel, QPushButton, QComboBox, QLineEdit, QAbstractItemView, QDialog
+import bcrypt
+import json
+
 
 def add_person(name, surname):
     query = QSqlQuery()
@@ -21,9 +24,9 @@ def edit_person(OsID, NewName, NewSurname):
     query.addBindValue(NewSurname)
     query.addBindValue(OsID)
     if not query.exec():
-        infoLabel.setText("Nie udalo sie dodac osoby:", query.lastError().text())
+        infoLabel.setText("Nie udalo sie edytowac osoby:", query.lastError().text())
     else:
-        infoLabel.setText("USUNIĘTO OSOBĘ!")
+        infoLabel.setText("edytowano osobę!")
         
 def add_book(title, author):
     query = QSqlQuery()
@@ -34,6 +37,17 @@ def add_book(title, author):
         infoLabel.setText("Nie udalo sie dodac ksiazki:", query.lastError().text())
     else:
         infoLabel.setText("DODANO KSIĄŻKĘ!")
+
+def edit_book(BookID, NewTitle, NewAuthor):
+    query = QSqlQuery()
+    query.prepare("UPDATE ksiazki SET title = ?, author = ? WHERE BookID = ?")
+    query.addBindValue(NewTitle)
+    query.addBindValue(NewAuthor)
+    query.addBindValue(BookID)
+    if not query.exec():
+        infoLabel.setText("Nie udalo sie edytowac ksiazki:", query.lastError().text())
+    else:
+        infoLabel.setText("edytowano książkę!")
 
 def add_wypozycznia(osID, ksiazkaID):
     query = QSqlQuery()
@@ -54,6 +68,16 @@ def del_wypozycznia(wypID):
     else:
         infoLabel.setText("USUNUĘTO WYPOŻYCZENIE!")
 
+def add_user(username, password):
+    hashed_password = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
+    query = QSqlQuery()
+    query.prepare("INSERT INTO users (Username, Password) VALUES (?, ?)")
+    query.addBindValue(username)
+    query.addBindValue(hashed_password.decode('utf-8'))
+    if not query.exec():
+        infoLabel.setText("Nie udało się dodać użytkownika:", query.lastError().text())
+    else:
+        infoLabel.setText("DODANO UZYTKOWNIKA!")
 
 def create_table_osoby():
     query = QSqlQuery()
@@ -98,7 +122,72 @@ def create_table_wypozyczenia():
     """
     if not query.exec(create_table_sql):
         infoLabel.setText("Nie udało się stworzyć tabeli wypożyczeń:", query.lastError().text())
-        
+
+def create_table_users():
+    query = QSqlQuery()
+
+    query.exec("DROP TABLE IF EXISTS users")
+    create_table_sql = """
+    CREATE TABLE IF NOT EXISTS users (
+        UserID INTEGER PRIMARY KEY AUTOINCREMENT,
+        Username VARCHAR(255) UNIQUE,
+        Password VARCHAR(255)
+    )
+    """
+    if not query.exec(create_table_sql):
+        infoLabel.setText("Nie udało się stworzyć tabeli użytkowników:", query.lastError().text())
+
+def login_popup():
+    dialog = QDialog()
+    dialog.setWindowTitle("Logowanie")
+    dialog.setGeometry(400, 300, 300, 150)
+
+    layout = QVBoxLayout()
+
+    username_label = QLabel("Nazwa użytkownika")
+    username_input = QLineEdit()
+    password_label = QLabel("Hasło")
+    password_input = QLineEdit()
+    password_input.setEchoMode(QLineEdit.EchoMode.Password)
+    login_button = QPushButton("Zaloguj")
+    info_label = QLabel("")
+    tip_label = QLabel("Psssst... Spróbuj: \n login: admin \n hasło: admin \n :)")
+
+    layout.addWidget(username_label)
+    layout.addWidget(username_input)
+    layout.addWidget(password_label)
+    layout.addWidget(password_input)
+    layout.addWidget(login_button)
+    layout.addWidget(info_label)
+    layout.addWidget(tip_label)
+
+    dialog.setLayout(layout)
+
+    def authenticate_user(username, password):
+        query = QSqlQuery()
+        query.prepare("SELECT Password FROM users WHERE Username = ?")
+        query.addBindValue(username)
+        if query.exec() and query.next():
+            stored_password = query.value(0)
+            return bcrypt.checkpw(password.encode('utf-8'), stored_password.encode('utf-8'))
+        return False
+
+    def handle_login():
+        username = username_input.text().strip()
+        password = password_input.text().strip()
+        if username and password:
+            if authenticate_user(username, password):
+                dialog.accept()
+            else:
+                info_label.setText("Nie udało się zalogować!")
+        else:
+            info_label.setText("Wprowadź dane logowania!")
+
+    login_button.clicked.connect(handle_login)
+
+    if not dialog.exec():
+        sys.exit(0) 
+
 app = QApplication([])
 
 window = QWidget()
@@ -110,10 +199,24 @@ db.setDatabaseName("book_borrow.db")
 
 if not db.open():
     sys.exit(1)
-
+infoLabel = QLabel()
 create_table_osoby()
 create_table_ksiazki()
 create_table_wypozyczenia()
+create_table_users()
+
+add_person("John", "Doe")
+add_person("Jane", "Smith")
+
+add_book("krzyzacy", "sienkiewicz")
+add_book("bandyta", "remi mroz")
+
+add_wypozycznia(1,1)
+add_wypozycznia(2,1)
+
+add_user("admin", "admin")
+
+login_popup()
 
 #osoby
 model = QtSql.QSqlTableModel()
@@ -301,28 +404,60 @@ sort.currentIndexChanged.connect(F_sort)
 sort.setFixedHeight(30)
 Options.addWidget(sort)
 
+
+s1 = QLineEdit()
+s1.setPlaceholderText("Wprowadź nowe dane...")
+s2 = QLineEdit()
+s2.setPlaceholderText("Wprowadź nowe dane...")
+editPerson = QPushButton()
+editBook = QPushButton()
+editPerson.setText("edytuj osobę")
+editBook.setText("edytuj książkę")
+
+def F_editPerson():
+    indexOsoby = view.selectionModel().currentIndex()
+    if indexOsoby.isValid():
+        personID = model.record(indexOsoby.row()).value("PersonID")
+        if s1.text().strip() != "" and s2.text().strip() != "":
+            print(s1.text().strip(), s2.text().strip())
+            edit_person(personID,s1.text().strip(), s2.text().strip())
+            model.select()
+            model2.select()
+            model3.setQuery(query3)
+        else:
+            infoLabel.setText("NIE WPROWADZONO DANYCH!")
+def F_editBook():
+    indexKsiazki = view2.selectionModel().currentIndex()
+    if indexKsiazki.isValid():
+        bookID = model2.record(indexKsiazki.row()).value("BookID")
+        if s1.text().strip() != "" and s2.text().strip() != "":
+            print(s1.text().strip(), s2.text().strip())
+            edit_book(bookID ,s1.text().strip(), s2.text().strip())
+            model.select()
+            model2.select()
+            model3.setQuery(query3)
+        else:
+            infoLabel.setText("NIE WPROWADZONO DANYCH!")
+
+editPerson.clicked.connect(F_editPerson)
+editBook.clicked.connect(F_editBook)
+Options.addWidget(s1)
+Options.addWidget(s2)
+Options.addWidget(editPerson)
+Options.addWidget(editBook)
+
 Sections.addLayout(Options,1)
 #endregion
 
 info = QVBoxLayout()
-infoLabel = QLabel()
 info.addWidget(infoLabel)
 
 mainLayout.addLayout(Sections)
 mainLayout.addLayout(info)
 window.setLayout(mainLayout)
 
-add_person("John", "Doe")
-add_person("Jane", "Smith")
-
-add_book("krzyzacy", "sienkiewicz")
-add_book("bandyta", "remi mroz")
-
-add_wypozycznia(1,1)
-add_wypozycznia(2,1)
-
-model2.select()
 model.select()
+model2.select()
 model3.setQuery(query3)
 
 window.show()
