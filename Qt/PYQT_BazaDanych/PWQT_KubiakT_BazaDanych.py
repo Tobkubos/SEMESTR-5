@@ -77,7 +77,7 @@ def add_user(username, password):
     if not query.exec():
         infoLabel.setText("Nie udało się dodać użytkownika:", query.lastError().text())
     else:
-        infoLabel.setText("DODANO UZYTKOWNIKA!")
+        infoLabel.setText("")
 
 def create_table_osoby():
     query = QSqlQuery()
@@ -205,14 +205,14 @@ create_table_ksiazki()
 create_table_wypozyczenia()
 create_table_users()
 
-add_person("John", "Doe")
-add_person("Jane", "Smith")
+#add_person("Jacek", "Soplica")
+#add_person("Ksiadz", "Robak")
 
-add_book("krzyzacy", "sienkiewicz")
-add_book("bandyta", "remi mroz")
+#add_book("Lalka", "Prus")
+#add_book("Ferdydurke", "Gombrowicz")
 
-add_wypozycznia(1,1)
-add_wypozycznia(2,1)
+#add_wypozycznia(1,1)
+#add_wypozycznia(2,1)
 
 add_user("admin", "admin")
 
