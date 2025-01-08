@@ -28,13 +28,13 @@ patterns = [
     ]
 
 test = [
-         -1, -1, -1, -1, -1,
-         -1, 1, 1, 1, -1,
-         1, 1, 1, 1, 1,
-         1, 1, 1, 1, -1,
-         -1, 1, 1, 1, -1,
+         -1,-1,-1,-1,-1,
+         -1, 1, 1, 1,-1,
+          1, 1, 1, 1, 1,
+          1, 1, 1, 1,-1,
+         -1, 1, 1, 1,-1,
          -1, 1, 1, 1, 1,
-         -1, 1, 1, 1, -1
+         -1, 1, 1, 1,-1
     ]
       
 
@@ -48,14 +48,12 @@ def CalcWeights():
                 if i!= j:
                     w[i][j] += p[i] * p[j]
 
-    #for i in range(len(w)):
-        #print(w[i])
     
     output = test.copy()
     previous_output = output.copy()
 
-    maxIterations = 10
-    for i in range(maxIterations):
+    maxIterations = 100
+    for q in range(maxIterations):
         randomOrder = list(range(matrixSize))
         random.shuffle(randomOrder)
         for i in randomOrder:
@@ -68,7 +66,7 @@ def CalcWeights():
             break
 
         previous_output = output.copy()
-
+        print("iteracja ",q+1)
         for i in range(35):
             if output[i] == 1:
                 print(" ", end=' ')
